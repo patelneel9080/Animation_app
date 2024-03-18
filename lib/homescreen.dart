@@ -11,6 +11,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+
   List<String> items = [];
 
   late Timer _timer;
@@ -27,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
   }
+
 
   @override
   void dispose() {

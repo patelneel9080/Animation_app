@@ -12,8 +12,9 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
-
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _controller;
   late AnimationController _scaleController;
   late Animation<double> _scaleAnimation;
 
@@ -22,22 +23,30 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 5),
+    )..repeat();
+    _scaleController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 800));
 
-    _scaleController = AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: 800)
-    );
-
-    _scaleAnimation = Tween<double>(
-        begin: 1.0,
-        end: 40.0
-    ).animate(_scaleController)..addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: HomeScreen()));
-      }
-    });
-
+    _scaleAnimation =
+        Tween<double>(begin: 1.0, end: 40.0).animate(_scaleController)
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.completed) {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.fade, child: HomeScreen()));
+            }
+          });
   }
+
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -45,14 +54,41 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       backgroundColor: Colors.black54,
       body: Column(
         children: [
-           Stack(alignment: Alignment.center,
+          Stack(
+            alignment: Alignment.center,
             children: [
-              FadeInUp(child: CircleAvatar(radius: 235,foregroundImage:  NetworkImage(
-                  "https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGYtczExMy1hay02MDIwLTAxYS5qcGc.jpg"),
-                backgroundImage: NetworkImage(
-                    "https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGYtczExMy1hay02MDIwLTAxYS5qcGc.jpg"),
-              ), ),
-              FadeInUp(child: Image.asset("assets/images/splashscreen.png"),)
+              FadeInUp(
+                // child: CircleAvatar(
+                //   radius: 235,
+                //   foregroundImage: NetworkImage(
+                //       "https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGYtczExMy1hay02MDIwLTAxYS5qcGc.jpg"),
+                //   backgroundImage: NetworkImage(
+                //       "https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGYtczExMy1hay02MDIwLTAxYS5qcGc.jpg"),
+                // ),
+                child: AnimatedBuilder(
+                  animation: _controller,
+                  builder: (BuildContext context, Widget? child) {
+                    return Transform.rotate(
+                      angle: _controller.value * 2.0 * 3.1415926535897932, // Angle in radians, full rotation
+                      // child: CircleAvatar(
+                      //   backgroundImage: NetworkImage('https://www.textures4photoshop.com/tex/thumbs/smoke-ring-free-texture-overlay-thumb31.jpg'),
+                      //   radius: 280.0,
+                      // ),
+                      child: Container(
+                        height: size.height/1.8,
+                        width: size.width,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(image:  NetworkImage('https://www.textures4photoshop.com/tex/thumbs/smoke-ring-free-texture-overlay-thumb31.jpg'),fit: BoxFit.cover)
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              FadeInUp(
+                child: Image.asset("assets/images/splashscreen.png"),
+              )
             ],
           ),
           FadeInUp(
@@ -116,7 +152,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
             ),
           ),
           SizedBox(
-            height: size.height/34,
+            height: size.height / 34,
           ),
           InkWell(
             onTap: () {
@@ -129,17 +165,24 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               animation: _scaleController,
               builder: (context, child) => Transform.scale(
                 scale: _scaleAnimation.value,
-                child: FadeInUp(duration: Duration(milliseconds: 1500), child: Container(
-                  width: size.width/1.5,
-                  height: size.height/18,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(50)
-                  ),
-                  child: Center(
-                    child: hide == false ? FadeInUp(child: Text("Continue", style: TextStyle(fontWeight: FontWeight.bold),)) : Container(),
-                  ),
-                )),
+                child: FadeInUp(
+                    duration: Duration(milliseconds: 1500),
+                    child: Container(
+                      width: size.width / 1.5,
+                      height: size.height / 18,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(50)),
+                      child: Center(
+                        child: hide == false
+                            ? FadeInUp(
+                                child: Text(
+                                "Continue",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ))
+                            : Container(),
+                      ),
+                    )),
               ),
             ),
           ),
